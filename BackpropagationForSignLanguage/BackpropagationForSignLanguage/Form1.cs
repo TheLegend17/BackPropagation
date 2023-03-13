@@ -18,55 +18,79 @@ namespace BackpropagationForSignLanguage
     public partial class Form1 : Form
     {
         NeuralNet nn;
-        Image dataA1, dataA2, testImage, dataB1, dataB2, dataC1, dataC2, dataD1, dataD2,
-            dataE1, dataE2, dataF1, dataF2, dataG1, dataG2, dataH1, dataH2, dataI1, dataI2,
-            dataJ1, dataJ2;
-        Bitmap A1, A2, test, B1, B2,C1, C2, D1, D2, E1, E2, F1, F2, G1, G2, H1, H2, I1, I2, J1, J2;
+        Bitmap test;
 
         public Form1()
         {
             InitializeComponent();
-            dataA1 = Image.FromFile("D:\\TrainingData\\A\\A1.jpg");
-            dataA2 = Image.FromFile("D:\\TrainingData\\A\\A2.jpg");
-            dataB1 = Image.FromFile("D:\\TrainingData\\B\\B1.jpg");
-            dataB2 = Image.FromFile("D:\\TrainingData\\B\\B2.jpg");
-            dataC1 = Image.FromFile("D:\\TrainingData\\C\\C1.jpg");
-            dataC2 = Image.FromFile("D:\\TrainingData\\C\\C2.jpg");
-            dataD1 = Image.FromFile("D:\\TrainingData\\D\\D1.jpg");
-            dataD2 = Image.FromFile("D:\\TrainingData\\D\\D2.jpg");
-            dataE1 = Image.FromFile("D:\\TrainingData\\E\\E1.jpg");
-            dataE2 = Image.FromFile("D:\\TrainingData\\E\\E2.jpg");
-            dataF1 = Image.FromFile("D:\\TrainingData\\F\\F1.jpg");
-            dataF2 = Image.FromFile("D:\\TrainingData\\F\\F2.jpg");
-            dataG1 = Image.FromFile("D:\\TrainingData\\G\\G1.jpg");
-            dataG2 = Image.FromFile("D:\\TrainingData\\G\\G2.jpg");
-            dataH1 = Image.FromFile("D:\\TrainingData\\H\\H1.jpg");
-            dataH2 = Image.FromFile("D:\\TrainingData\\H\\H2.jpg");
-            dataI1 = Image.FromFile("D:\\TrainingData\\I\\I1.jpg");
-            dataI2 = Image.FromFile("D:\\TrainingData\\I\\I2.jpg");
-            dataJ1 = Image.FromFile("D:\\TrainingData\\J\\J1.jpg");
-            dataJ2 = Image.FromFile("D:\\TrainingData\\J\\J2.jpg");
-            A1 = (Bitmap)dataA1;
-            A2 = (Bitmap)dataA2;
-            B1 = (Bitmap)dataB1;
-            B2 = (Bitmap)dataB2;
-            C1 = (Bitmap)dataC1;
-            C2 = (Bitmap)dataC2;
-            D1 = (Bitmap)dataD1;
-            D2 = (Bitmap)dataD2;
-            E1 = (Bitmap)dataE1;
-            E2 = (Bitmap)dataE2;
-            F1 = (Bitmap)dataF1;
-            F2 = (Bitmap)dataF2;
-            G1 = (Bitmap)dataG1;
-            G2 = (Bitmap)dataG2;
-            H1 = (Bitmap)data1;
-            H2 = (Bitmap)dataD2;
-            I1 = (Bitmap)dataD1;
-            I2 = (Bitmap)dataD2;
-            J1 = (Bitmap)dataD1;
-            J2 = (Bitmap)dataD2;
-            nn = new NeuralNet(dataA1.Width * dataA1.Height, 20, 4);
+            nn = new NeuralNet(3000, 30, 5);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Bitmap trainingImage;
+            Bitmap temp;
+            int bCounter;
+            for (int i = 0; i < Convert.ToInt32(textBox1.Text); i++)
+            {
+                // Training for A
+                string[] filesA = Directory.GetFiles("D:\\TrainingData\\AFinal");
+                foreach (string file in filesA)
+                {
+                    temp = (Bitmap)Image.FromFile(file);
+                    trainingImage = Resize(temp);
+                    bCounter = 0;
+                    for (int x = 0; x < trainingImage.Width; x++)
+                    {
+                        for (int y = 0; y < trainingImage.Height; y++)
+                        {
+                            // Get the color of pixel
+                            Color pixelColor = trainingImage.GetPixel(x, y);
+                            // Calculate is grayscale Value
+                            int grayscaleValue = (int)(0.299 * pixelColor.R + 0.587 * pixelColor.G + 0.114 * pixelColor.B);
+                            // Feed to our network
+                            nn.setInputs(bCounter, grayscaleValue);
+                            bCounter++;
+                        }
+                    }
+                    // A - 1 - 00001
+                    nn.setDesiredOutput(0, 0.0);
+                    nn.setDesiredOutput(1, 0.0);
+                    nn.setDesiredOutput(2, 0.0);
+                    nn.setDesiredOutput(3, 0.0);
+                    nn.setDesiredOutput(4, 1.0);
+                    nn.learn();
+                }
+                // Training for B
+                string[] filesB = Directory.GetFiles("D:\\TrainingData\\BFinal");
+                foreach (string file in filesB)
+                {
+                    temp = (Bitmap)Image.FromFile(file);
+                    trainingImage = Resize(temp);
+                    bCounter = 0;
+                    for (int x = 0; x < trainingImage.Width; x++)
+                    {
+                        for (int y = 0; y < trainingImage.Height; y++)
+                        {
+                            // Get the color of pixel
+                            Color pixelColor = trainingImage.GetPixel(x, y);
+                            // Calculate is grayscale Value
+                            int grayscaleValue = (int)(0.299 * pixelColor.R + 0.587 * pixelColor.G + 0.114 * pixelColor.B);
+                            // Feed to our network
+                            nn.setInputs(bCounter, grayscaleValue);
+                            bCounter++;
+                        }
+                    }
+                    // B - 2 - 00010
+                    nn.setDesiredOutput(0, 0.0);
+                    nn.setDesiredOutput(1, 0.0);
+                    nn.setDesiredOutput(2, 0.0);
+                    nn.setDesiredOutput(3, 1.0);
+                    nn.setDesiredOutput(4, 0.0);
+                    nn.learn();
+                }
+            }
+            Console.WriteLine("Done Training");
         }
 
         public Bitmap Resize(Bitmap a)
@@ -100,7 +124,7 @@ namespace BackpropagationForSignLanguage
                 // and assign that to the PictureBox.Image property
                 pictureBox2.Image = Resize(new Bitmap(openFileDialog1.FileName));
             }
-            testImage = pictureBox2.Image;
+            Image testImage = pictureBox2.Image;
             test = (Bitmap)testImage;
         }
 
@@ -133,20 +157,169 @@ namespace BackpropagationForSignLanguage
                 }
             }
             nn.run();
-            label1.Text = "" + nn.getOuputData(0) + "\n" + nn.getOuputData(1) + "\n" + nn.getOuputData(2) + "\n" + nn.getOuputData(3);
-            if (nn.getOuputData(0) > .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) < .5 && nn.getOuputData(3) < .5)
-                pictureBox1.Image = Resize(A1);
-            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) > .5 && nn.getOuputData(2) < .5 && nn.getOuputData(3) < .5)
-                pictureBox1.Image = Resize(B1);
-            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5)
-                pictureBox1.Image = Resize(C1);
-            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) < .5 && nn.getOuputData(3) > .5)
-                pictureBox1.Image = Resize(D1);
+            label1.Text = "" + nn.getOuputData(0) + "\n" + nn.getOuputData(1) + "\n" + nn.getOuputData(2) + "\n" + nn.getOuputData(3) + "\n" + nn.getOuputData(4);
+            Bitmap output;
+            //A
+            if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) < .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) > .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //B
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) < .5 && nn.getOuputData(3) > .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\BFinal\\B356.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            /*//C
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) < .5 && nn.getOuputData(3) > .5 && nn.getOuputData(4) > .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //D
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //E 
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) > .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //F Here below not yet set
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //G
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //H
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //I
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //J
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //K
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //L
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //M
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //N
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //O
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //P
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //Q
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //R
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //S
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //T
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //U
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //V
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //W
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //X
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //Y
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }
+            //Z
+            else if (nn.getOuputData(0) < .5 && nn.getOuputData(1) < .5 && nn.getOuputData(2) > .5 && nn.getOuputData(3) < .5 && nn.getOuputData(4) < .5)
+            {
+                output = (Bitmap)Image.FromFile("D:\\TrainingData\\AFinal\\A1091.jpg");
+                pictureBox1.Image = Resize(output);
+            }*/
             else
                 label1.Text = "Unable to Recognize";
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        /*private void button1_Click_1(object sender, EventArgs e)
         {
             int epoch = Convert.ToInt32(textBox1.Text);
             // Training A1
@@ -167,11 +340,12 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // A = 1000
-                nn.setDesiredOutput(0, 1.0);
+                // A - 1 - 00001
+                nn.setDesiredOutput(0, 0.0);
                 nn.setDesiredOutput(1, 0.0);
                 nn.setDesiredOutput(2, 0.0);
                 nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(4, 1.0);
                 nn.learn();
                 // Learn A2
                 Bitmap b = Resize(A2);
@@ -189,11 +363,12 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // A = 1000
-                nn.setDesiredOutput(0, 1.0);
+                // A - 1 - 00001
+                nn.setDesiredOutput(0, 0.0);
                 nn.setDesiredOutput(1, 0.0);
                 nn.setDesiredOutput(2, 0.0);
                 nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(4, 1.0);
                 nn.learn();
                 // Learn B1
                 b = Resize(B1);
@@ -211,11 +386,12 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // B = 0100
+                // B - 2 - 00010
                 nn.setDesiredOutput(0, 0.0);
-                nn.setDesiredOutput(1, 1.0);
+                nn.setDesiredOutput(1, 0.0);
                 nn.setDesiredOutput(2, 0.0);
-                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(3, 1.0);
+                nn.setDesiredOutput(4, 0.0);
                 nn.learn();
                 // Learn B2
                 b = Resize(B2);
@@ -233,11 +409,12 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // B = 0100
+                // B - 2 - 00010
                 nn.setDesiredOutput(0, 0.0);
-                nn.setDesiredOutput(1, 1.0);
+                nn.setDesiredOutput(1, 0.0);
                 nn.setDesiredOutput(2, 0.0);
-                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(3, 1.0);
+                nn.setDesiredOutput(4, 0.0);
                 nn.learn();
                 // Learn C1
                 b = Resize(C1);
@@ -255,11 +432,12 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // C = 0010
+                // C - 3 - 00011
                 nn.setDesiredOutput(0, 0.0);
                 nn.setDesiredOutput(1, 0.0);
-                nn.setDesiredOutput(2, 1.0);
-                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(2, 0.0);
+                nn.setDesiredOutput(3, 1.0);
+                nn.setDesiredOutput(4, 1.0);
                 nn.learn();
                 // Learn C2
                 b = Resize(C2);
@@ -277,11 +455,12 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // C = 0010
+                // C - 3 - 00011
                 nn.setDesiredOutput(0, 0.0);
                 nn.setDesiredOutput(1, 0.0);
-                nn.setDesiredOutput(2, 1.0);
-                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(2, 0.0);
+                nn.setDesiredOutput(3, 1.0);
+                nn.setDesiredOutput(4, 1.0);
                 nn.learn();
                 // Learn D1
                 b = Resize(D1);
@@ -299,11 +478,12 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // D = 0001
+                // D - 4 - 00100
                 nn.setDesiredOutput(0, 0.0);
                 nn.setDesiredOutput(1, 0.0);
-                nn.setDesiredOutput(2, 0.0);
-                nn.setDesiredOutput(3, 1.0);
+                nn.setDesiredOutput(2, 1.0);
+                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(4, 0.0);
                 nn.learn();
                 // Learn D2
                 b = Resize(D2);
@@ -321,14 +501,61 @@ namespace BackpropagationForSignLanguage
                         bCounter++;
                     }
                 }
-                // D = 0001
+                // D - 4 - 00100
                 nn.setDesiredOutput(0, 0.0);
                 nn.setDesiredOutput(1, 0.0);
-                nn.setDesiredOutput(2, 0.0);
-                nn.setDesiredOutput(3, 1.0);
+                nn.setDesiredOutput(2, 1.0);
+                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(4, 0.0);
+                nn.learn();
+                // Learn E1
+                b = Resize(E1);
+                bCounter = 0;
+                for (int x = 0; x < b.Width; x++)
+                {
+                    for (int y = 0; y < b.Height; y++)
+                    {
+                        // Get the color of pixel
+                        Color pixelColor = b.GetPixel(x, y);
+                        // Calculate is grayscale Value
+                        int grayscaleValue = (int)(0.299 * pixelColor.R + 0.587 * pixelColor.G + 0.114 * pixelColor.B);
+                        // Feed to our network
+                        nn.setInputs(bCounter, grayscaleValue);
+                        bCounter++;
+                    }
+                }
+                // E - 5 - 00101
+                nn.setDesiredOutput(0, 0.0);
+                nn.setDesiredOutput(1, 0.0);
+                nn.setDesiredOutput(2, 1.0);
+                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(4, 1.0);
+                nn.learn();
+                // Learn E2
+                b = Resize(E2);
+                bCounter = 0;
+                for (int x = 0; x < b.Width; x++)
+                {
+                    for (int y = 0; y < b.Height; y++)
+                    {
+                        // Get the color of pixel
+                        Color pixelColor = b.GetPixel(x, y);
+                        // Calculate is grayscale Value
+                        int grayscaleValue = (int)(0.299 * pixelColor.R + 0.587 * pixelColor.G + 0.114 * pixelColor.B);
+                        // Feed to our network
+                        nn.setInputs(bCounter, grayscaleValue);
+                        bCounter++;
+                    }
+                }
+                // E - 5 - 00101
+                nn.setDesiredOutput(0, 0.0);
+                nn.setDesiredOutput(1, 0.0);
+                nn.setDesiredOutput(2, 1.0);
+                nn.setDesiredOutput(3, 0.0);
+                nn.setDesiredOutput(4, 1.0);
                 nn.learn();
             }
             Console.WriteLine("Done");
-        }
+        }*/
     }
 }
